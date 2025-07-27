@@ -1,120 +1,113 @@
 import streamlit as st
 import os
-import pandas as pd
+import json
 from datetime import datetime
 
 st.set_page_config(page_title="పల్లె మాటలు", page_icon="🌾", layout="centered")
-st.title("🌾 పల్లె మాటలు – తెలుగువారి సామెతల కోశం")
-st.markdown("తెలంగాణ గ్రామీణుల మాటలు, సామెతలు, కథలు — మీరు చెప్పండి, మనం కాపాడుకుందాం!")
 
-# File paths
-DATA_FILE = "palle_matala_data.csv"
+DATA_FILE = "data.json"
 UPLOAD_FOLDER = "uploads"
+
+# Create upload folder if not exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Default entries (5 proverbs)
-default_entries = [
-    {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "proverb": "అవ్వ చెప్పిన మాట అక్కిరాజు కంటే మేలు",
-        "meaning": "వృద్ధుల అనుభవం పదిపుస్తకాలను మించినది.",
-        "usage": "పెళ్లిళ్ల వ్యవహారాల్లో పెద్దల మాట వినడమే మేలు అంటారు.",
-        "extra_story": "",
-        "audio_path": ""
-    },
-    {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "proverb": "పులి కనిపించక ముందే బల్లెం తెంపాడు",
-        "meaning": "సమస్య రాకముందే పరిష్కారం వెతకడం.",
-        "usage": "రాము ఎల్లప్పుడూ ముందే ప్లాన్ చేసుకుంటాడు.",
-        "extra_story": "",
-        "audio_path": ""
-    },
-    {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "proverb": "ఎద్దు గడ్డి తింటుందో లేదో, పిట్ట గాలికి వణికింది",
-        "meaning": "వచ్చే సమస్యకంటే ముందే భయపడటం.",
-        "usage": "నీవెందుకు టెన్షన్ పడుతున్నావు?",
-        "extra_story": "",
-        "audio_path": ""
-    },
-    {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "proverb": "వర్షం కురిస్తే, కప్ప మాత్రమే కాకుండా నంది కూడా ఆనందిస్తుంది",
-        "meaning": "ఒక మంచి పని వల్ల అందరికీ ఉపయోగం.",
-        "usage": "గ్రంథాలయం వల్ల ప్రతి విద్యార్థికి ఉపయోగం.",
-        "extra_story": "",
-        "audio_path": ""
-    },
-    {
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "proverb": "కోయిల కూస్తే కాలం మారింది",
-        "meaning": "చుట్టూ పరిస్థితులు మారడం.",
-        "usage": "ఇప్పుడు పిల్లలు కూడా పల్లె మాటలు నేర్చుకుంటున్నారు!",
-        "extra_story": "",
-        "audio_path": ""
-    }
-]
+# ---------- JSON Backend Functions ----------
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return []
+    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-# Load or initialize data
+def save_data(data):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# ---------- Optional: Add Default Data ----------
 if not os.path.exists(DATA_FILE):
-    df = pd.DataFrame(default_entries)
-    df.to_csv(DATA_FILE, index=False)
+    default_data = [
+        {
+            "type": "సామెతలు",
+            "content": "పుట్టగొడుగుల వర్షం",
+            "meaning": "ఒకేసారి చాలా వస్తే ఇలా అంటారు",
+            "audio_path": ""
+        },
+        {
+            "type": "సామెతలు",
+            "content": "గడ్డపరిచిన పామును చూసి చీమ కూడా కొరుకుతుంది",
+            "meaning": "శక్తిని కోల్పోయిన వారిని అందరూ తక్కువ చేస్తారు",
+            "audio_path": ""
+        },
+        {
+            "type": "సామెతలు",
+            "content": "నిన్ను నువ్వే పొగుడుకోకపోతే మరెవరు పొగుడతారు",
+            "meaning": "తానేం చేసినా తానే పొగడుకోవాలి",
+            "audio_path": ""
+        },
+        {
+            "type": "పొడుపుకథలు",
+            "content": "రెండు కన్నులున్నా చూడలేని పాపం?",
+            "meaning": "కత్తెర",
+            "audio_path": ""
+        },
+        {
+            "type": "పొడుపుకథలు",
+            "content": "నడిచే పాపా – తల నెత్తిన పాలు",
+            "meaning": "చిన్న వయసులో పెద్ద బాధ్యతలు తీసుకునే వారు",
+            "audio_path": ""
+        }
+    ]
+    save_data(default_data)
+
+# ---------- UI Starts ----------
+st.title("🌾 పల్లె మాటలు")
+st.markdown("### 🙏 నమస్తే తెలంగాణ ప్రజలారా! మన ఊరి మాటలూ, తెలివి మాటలూ చెరిపిపోకుండా దిద్దుకుందాం!")
+
+# ---------- Category Selection ----------
+st.subheader("📂 ఏది చూడాలని ఉంది?")
+category = st.radio("కేటగిరీని ఎంచుకోండి:", ["సామెతలు", "పొడుపుకథలు"])
+
+data = load_data()
+filtered = [item for item in data if item["type"] == category]
+
+# ---------- Show Proverbs or Riddles ----------
+if filtered:
+    for item in filtered[::-1]:
+        st.markdown(f"### 📝 {item['content']}")
+        st.markdown(f"**అర్థం:** {item['meaning']}")
+        if item["audio_path"]:
+            st.audio(item["audio_path"])
+        st.markdown("---")
 else:
-    df = pd.read_csv(DATA_FILE)
+    st.info("ఈ కేటగిరీలో ఇంకా ఎంట్రీలు లేవు.")
 
-# Show proverbs
-st.subheader("📚 ఇప్పటికే సమర్పించిన పల్లె మాటలు")
-for index, row in df[::-1].iterrows():
-    st.markdown(f"### 🗣️ {row['proverb']}")
-    st.markdown(f"**💡 అర్థం:** {row['meaning']}")
-    st.markdown(f"**📘 ఉదాహరణ:** _{row['usage']}_")
-    
-    if pd.notna(row['extra_story']) and row['extra_story'].strip():
-        st.markdown(f"**📖 ఇంకొక మాట లేదా కథ:** {row['extra_story']}")
+# ---------- Submission Section ----------
+st.markdown("## ✍️ మీకు తెలుసా ఇంకో మంచి సామెత లేదా పొడుపుకథ?")
+with st.expander("➕ కొత్తదాన్ని జోడించండి"):
+    new_type = st.selectbox("వర్గం ఎంచుకోండి:", ["సామెతలు", "పొడుపుకథలు"])
+    new_content = st.text_input("మీ సామెత లేదా పొడుపుకథ:")
+    new_meaning = st.text_area("అర్థం తెలుగులో:")
+    new_audio = st.file_uploader("ఒకవేళ ఆడియో ఉందా? (ఐచ్ఛికం)", type=["mp3", "wav", "m4a"])
 
-    if pd.notna(row['audio_path']) and os.path.exists(row['audio_path']):
-        st.audio(row['audio_path'])
+    if st.button("జమచేయి"):
+        if new_content.strip() and new_meaning.strip():
+            audio_path = ""
+            if new_audio:
+                filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{new_audio.name}"
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                with open(filepath, "wb") as f:
+                    f.write(new_audio.read())
+                audio_path = filepath
 
-    st.markdown("---")
+            new_entry = {
+                "type": new_type,
+                "content": new_content.strip(),
+                "meaning": new_meaning.strip(),
+                "audio_path": audio_path
+            }
 
-# Ask user if they want to contribute
-st.subheader("📥 మీరు కూడా చేర్చాలనుకుంటున్నారా?")
-if st.checkbox("👍 అవును, నేను సామెత చేర్చాలనుకుంటున్నాను"):
-    with st.form("submit_form"):
-        st.subheader("📝 మీ సమాచారం సమర్పించండి")
-
-        proverb = st.text_input("👉 సామెత / మాట")
-        meaning = st.text_area("💡 అర్థం")
-        usage = st.text_area("📘 ఉదాహరణ వాక్యం")
-
-        extra_story = st.text_area("📖 మీరు చెప్పాలనుకునే మరో సామెత లేదా కథ (ఐచ్ఛికం)", placeholder="ఇక్కడ టైప్ చేయండి...")
-        audio_file = st.file_uploader("🔊 ఉచ్ఛారణ ఫైల్ (ఐచ్ఛికం - .mp3 / .wav)", type=["mp3", "wav"])
-
-        submitted = st.form_submit_button("✅ సమర్పించండి")
-
-        if submitted:
-            if proverb.strip() == "" or meaning.strip() == "" or usage.strip() == "":
-                st.warning("దయచేసి సామెత, అర్థం మరియు ఉదాహరణ తప్పనిసరిగా నమోదు చేయండి.")
-            else:
-                # Save audio
-                audio_filename = ""
-                if audio_file is not None:
-                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                    audio_filename = f"{UPLOAD_FOLDER}/{timestamp}_{audio_file.name}"
-                    with open(audio_filename, "wb") as f:
-                        f.write(audio_file.read())
-
-                new_data = {
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "proverb": proverb,
-                    "meaning": meaning,
-                    "usage": usage,
-                    "extra_story": extra_story,
-                    "audio_path": audio_filename
-                }
-
-                df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-                df.to_csv(DATA_FILE, index=False)
-                st.success("🥳 మీరు పంపిన సమాచారం విజయవంతంగా నమోదు చేయబడింది!")
+            data.append(new_entry)
+            save_data(data)
+            st.success("👌 జమ అయింది! మీరు తెలంగాణ సంస్కృతికి తోడ్పడుతున్నారు.")
+        else:
+            st.warning("దయచేసి అన్ని వివరాలు పూరించండి.")
