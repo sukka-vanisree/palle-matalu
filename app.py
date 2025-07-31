@@ -1,113 +1,99 @@
 import streamlit as st
-import os
-import json
-from datetime import datetime
 
-st.set_page_config(page_title="పల్లె మాటలు", page_icon="🌾", layout="centered")
+# Set tab name and icon
+st.set_page_config(page_title="పల్లె మాటలు", page_icon="🌾", layout="wide")
 
-DATA_FILE = "data.json"
-UPLOAD_FOLDER = "uploads"
+# Initialize session state
+for key in ["page", "name", "place", "type", "answer", "feedback_given"]:
+    if key not in st.session_state:
+        st.session_state[key] = ""
 
-# Create upload folder if not exists
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+if "page_number" not in st.session_state:
+    st.session_state.page_number = 0
 
-# ---------- JSON Backend Functions ----------
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+# Helper to go pages
+def next_page():
+    st.session_state.page_number += 1
 
-def save_data(data):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+def prev_page():
+    if st.session_state.page_number > 0:
+        st.session_state.page_number -= 1
 
-# ---------- Optional: Add Default Data ----------
-if not os.path.exists(DATA_FILE):
-    default_data = [
-        {
-            "type": "సామెతలు",
-            "content": "పుట్టగొడుగుల వర్షం",
-            "meaning": "ఒకేసారి చాలా వస్తే ఇలా అంటారు",
-            "audio_path": ""
-        },
-        {
-            "type": "సామెతలు",
-            "content": "గడ్డపరిచిన పామును చూసి చీమ కూడా కొరుకుతుంది",
-            "meaning": "శక్తిని కోల్పోయిన వారిని అందరూ తక్కువ చేస్తారు",
-            "audio_path": ""
-        },
-        {
-            "type": "సామెతలు",
-            "content": "నిన్ను నువ్వే పొగుడుకోకపోతే మరెవరు పొగుడతారు",
-            "meaning": "తానేం చేసినా తానే పొగడుకోవాలి",
-            "audio_path": ""
-        },
-        {
-            "type": "పొడుపుకథలు",
-            "content": "రెండు కన్నులున్నా చూడలేని పాపం?",
-            "meaning": "కత్తెర",
-            "audio_path": ""
-        },
-        {
-            "type": "పొడుపుకథలు",
-            "content": "నడిచే పాపా – తల నెత్తిన పాలు",
-            "meaning": "చిన్న వయసులో పెద్ద బాధ్యతలు తీసుకునే వారు",
-            "audio_path": ""
-        }
-    ]
-    save_data(default_data)
+# Background layout with side image
+def side_by_side_image(image_path):
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.image(image_path, use_column_width=True)
+    return col2
 
-# ---------- UI Starts ----------
-st.title("🌾 పల్లె మాటలు")
-st.markdown("### 🙏 నమస్తే తెలంగాణ ప్రజలారా! మన ఊరి మాటలూ, తెలివి మాటలూ చెరిపిపోకుండా దిద్దుకుందాం!")
+# Pages
+def welcome_page():
+    col = side_by_side_image("front_image.jpg")
+    with col:
+        st.markdown("<h1 style='color:#4a148c;'>🌾 పల్లె మాటలు 🌾</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='background-color:#fff3e0; padding:10px;'>తెలంగాణ పదాలు, సామెతలు మరియు పొడుపుకథల మజిలీకి స్వాగతం!</h3>", unsafe_allow_html=True)
+        st.session_state.name = st.text_input("మీ పేరు:")
+        st.session_state.place = st.text_input("మీ ఊరు:")
+        if st.button("ముందుకు పోదాం"):
+            if st.session_state.name and st.session_state.place:
+                next_page()
+            else:
+                st.warning("దయచేసి పేరు మరియు ఊరు నమోదు చేయండి.")
 
-# ---------- Category Selection ----------
-st.subheader("📂 ఏది చూడాలని ఉంది?")
-category = st.radio("కేటగిరీని ఎంచుకోండి:", ["సామెతలు", "పొడుపుకథలు"])
+def selection_page():
+    col = side_by_side_image("second_image.jpg")
+    with col:
+        st.markdown(f"<h3 style='color:#4a148c;'>హలో {st.session_state.name} గారు ({st.session_state.place})!</h3>", unsafe_allow_html=True)
+        st.session_state.type = st.radio("మీకు ఏమి చూడాలనిపిస్తోంది?", ["సామెతలు", "పొడుపుకథలు"], index=0)
+        if st.button("తెరవండి"):
+            next_page()
+        if st.button("వెనక్కి"):
+            prev_page()
 
-data = load_data()
-filtered = [item for item in data if item["type"] == category]
+def content_page():
+    col = side_by_side_image("second_image.jpg")
+    with col:
+        st.markdown(f"<h2 style='color:#2e7d32;'>📚 {st.session_state.type}</h2>", unsafe_allow_html=True)
+        if st.session_state.type == "సామెతలు":
+            st.markdown("- **కాకికి కేరింత ఎందుకంటే మేత కనిపించింది.**")
+            st.markdown("    అర్థం: ఉపయోగం లేకపోయినా ఉత్సాహంగా ఉండటం.")
+            st.markdown("- **చెట్టు మీద బండలు వేసినట్టు.**")
+            st.markdown("    అర్థం: ఒకరు వినరని వ్యక్తిని కోరటం వృథా.")
+            st.markdown("- **అరచేతితో నెయ్యి మింగలేరు.**")
+            st.markdown("    అర్థం: అసాధ్యమైన పనికి ప్రయత్నించటం.")
 
-# ---------- Show Proverbs or Riddles ----------
-if filtered:
-    for item in filtered[::-1]:
-        st.markdown(f"### 📝 {item['content']}")
-        st.markdown(f"**అర్థం:** {item['meaning']}")
-        if item["audio_path"]:
-            st.audio(item["audio_path"])
-        st.markdown("---")
-else:
-    st.info("ఈ కేటగిరీలో ఇంకా ఎంట్రీలు లేవు.")
+        elif st.session_state.type == "పొడుపుకథలు":
+            riddles = [
+                {"question": "వేసవి తాపాన్ని తట్టుకుని చలిలో కదిలే వాడు ఎవరు?", "answer": "చెక్క"},
+                {"question": "నాకొక కన్ను, కాలేదు నడవటం, మాట్లాడతాను – నేను ఎవరు?", "answer": "రేడియో"},
+                {"question": "తన ఊరిని వదలకుండా నలుగురికి తిండి పెడతాడు – ఎవరు?", "answer": "చిమ్మట"}
+            ]
+            for idx, riddle in enumerate(riddles, 1):
+                st.markdown(f"**పొడుపు కథ {idx}:** {riddle['question']}")
+                user_answer = st.text_input(f"మీ సమాధానం {idx}:", key=f"riddle_{idx}")
+                if user_answer:
+                    if user_answer.strip() == riddle["answer"]:
+                        st.success("బాగుంది! సరైన సమాధానం 🎉")
+                    else:
+                        st.error(f"తప్పు సమాధానం. సరైనది: {riddle['answer']}")
 
-# ---------- Submission Section ----------
-st.markdown("## ✍️ మీకు తెలుసా ఇంకో మంచి సామెత లేదా పొడుపుకథ?")
-with st.expander("➕ కొత్తదాన్ని జోడించండి"):
-    new_type = st.selectbox("వర్గం ఎంచుకోండి:", ["సామెతలు", "పొడుపుకథలు"])
-    new_content = st.text_input("మీ సామెత లేదా పొడుపుకథ:")
-    new_meaning = st.text_area("అర్థం తెలుగులో:")
-    new_audio = st.file_uploader("ఒకవేళ ఆడియో ఉందా? (ఐచ్ఛికం)", type=["mp3", "wav", "m4a"])
+        if st.button("వెనక్కి"):
+            prev_page()
+        if st.button("మీ మాట చెప్పండి"):
+            next_page()
 
-    if st.button("జమచేయి"):
-        if new_content.strip() and new_meaning.strip():
-            audio_path = ""
-            if new_audio:
-                filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{new_audio.name}"
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
-                with open(filepath, "wb") as f:
-                    f.write(new_audio.read())
-                audio_path = filepath
+def feedback_page():
+    col = side_by_side_image("second_image.jpg")
+    with col:
+        st.markdown("<h2 style='color:#6a1b9a;'>🙏 ధన్యవాదాలు!</h2>", unsafe_allow_html=True)
+        st.markdown("మీరు 'పల్లె మాటలు' యాప్‌ని ఉపయోగించినందుకు చాలా ఆనందంగా ఉంది.")
+        feedback = st.text_area("మీ అభిప్రాయం / కొత్త సామెత లేదా పొడుపుకథను ఇక్కడ నమోదు చేయండి:")
+        if st.button("పంపండి"):
+            st.success("మీ అభిప్రాయం పంపబడింది. ధన్యవాదాలు! 🙏")
+        st.image("second_image.jpg", caption="మళ్ళీ కలుద్దాం!", use_column_width=False)
+        if st.button("వెనక్కి"):
+            prev_page()
 
-            new_entry = {
-                "type": new_type,
-                "content": new_content.strip(),
-                "meaning": new_meaning.strip(),
-                "audio_path": audio_path
-            }
-
-            data.append(new_entry)
-            save_data(data)
-            st.success("👌 జమ అయింది! మీరు తెలంగాణ సంస్కృతికి తోడ్పడుతున్నారు.")
-        else:
-            st.warning("దయచేసి అన్ని వివరాలు పూరించండి.")
+# Page Routing
+pages = [welcome_page, selection_page, content_page, feedback_page]
+pages[st.session_state.page_number]()
