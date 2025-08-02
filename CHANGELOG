@@ -1,0 +1,46 @@
+📜 CHANGELOG for "పల్లె మాటలు" App
+v1.0.0 - Initial Release (Date: YYYY-MM-DD)
+🎉 New Features:
+Multi-page Navigation using session_state.page_number to control flow:
+
+Welcome Page: User enters name and village.
+
+Selection Page: User selects between "సామెతలు" (proverbs) and "పొడుపుకథలు" (riddles).
+
+Content Page:
+
+Proverbs displayed with their meanings.
+
+Riddles displayed with validation of user answers.
+
+Feedback Page: Collects user opinions or contributions.
+
+🎨 UI & Layout:
+Custom Page Title and Icon: Set using st.set_page_config().
+
+Side-by-side Layout: Pages use columns to show an image on the left and content on the right.
+
+Styled Text: Headers and messages styled using HTML (unsafe_allow_html=True).
+
+🧠 Logic Enhancements:
+State Initialization: Ensures smooth navigation and stores user inputs (name, place, content type, answers).
+
+Navigation Buttons: next_page() and prev_page() functions manage screen transitions.
+
+🧪 Interactivity:
+Input Fields: For name, place, and riddle answers.
+
+Validation: Checks if name/place are filled before proceeding.
+
+Answer Checking: Immediate feedback (✅ or ❌) for riddle answers.
+
+📌 Future Scope (For Next Versions):
+Add more proverbs and riddles dynamically from a database or external file.
+
+Add language toggle (Telugu ↔ English).
+
+Implement user leaderboard for correct riddle answers.
+
+Enable downloadable PDF or shareable cards with proverbs/riddles.
+
+Store feedback to a cloud backend or Google Sheet.
