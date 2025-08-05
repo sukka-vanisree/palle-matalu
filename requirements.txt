@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 streamlit
 pillow
+=======
+streamlit
+pillow
+>>>>>>> 02e4b6d (front_image.png)

@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 # Set tab name and icon
 st.set_page_config(page_title="పల్లె మాటలు", page_icon="🌾", layout="wide")
@@ -23,7 +24,10 @@ def prev_page():
 def side_by_side_image(image_path):
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.image(image_path, use_column_width=True)
+        if os.path.exists(image_path):
+            st.image(image_path, use_column_width=True)
+        else:
+            st.warning(f"చిత్రాన్ని లొకేట్ చేయలేకపోయాం: {image_path}")
     return col2
 
 # Pages
@@ -45,22 +49,22 @@ def selection_page():
     with col:
         st.markdown(f"<h3 style='color:#4a148c;'>హలో {st.session_state.name} గారు ({st.session_state.place})!</h3>", unsafe_allow_html=True)
         st.session_state.type = st.radio("మీకు ఏమి చూడాలనిపిస్తోంది?", ["సామెతలు", "పొడుపుకథలు"], index=0)
-        if st.button("తెరవండి"):
-            next_page()
-        if st.button("వెనక్కి"):
-            prev_page()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("వెనక్కి"):
+                prev_page()
+        with col2:
+            if st.button("తెరవండి"):
+                next_page()
 
 def content_page():
     col = side_by_side_image("second_image.jpg")
     with col:
         st.markdown(f"<h2 style='color:#2e7d32;'>📚 {st.session_state.type}</h2>", unsafe_allow_html=True)
         if st.session_state.type == "సామెతలు":
-            st.markdown("- **కాకికి కేరింత ఎందుకంటే మేత కనిపించింది.**")
-            st.markdown("    అర్థం: ఉపయోగం లేకపోయినా ఉత్సాహంగా ఉండటం.")
-            st.markdown("- **చెట్టు మీద బండలు వేసినట్టు.**")
-            st.markdown("    అర్థం: ఒకరు వినరని వ్యక్తిని కోరటం వృథా.")
-            st.markdown("- **అరచేతితో నెయ్యి మింగలేరు.**")
-            st.markdown("    అర్థం: అసాధ్యమైన పనికి ప్రయత్నించటం.")
+            st.markdown("- **కాకికి కేరింత ఎందుకంటే మేత కనిపించింది.**  \nఅర్థం: ఉపయోగం లేకపోయినా ఉత్సాహంగా ఉండటం.")
+            st.markdown("- **చెట్టు మీద బండలు వేసినట్టు.**  \nఅర్థం: ఒకరు వినరని వ్యక్తిని కోరటం వృథా.")
+            st.markdown("- **అరచేతితో నెయ్యి మింగలేరు.**  \nఅర్థం: అసాధ్యమైన పనికి ప్రయత్నించటం.")
 
         elif st.session_state.type == "పొడుపుకథలు":
             riddles = [
@@ -69,7 +73,7 @@ def content_page():
                 {"question": "తన ఊరిని వదలకుండా నలుగురికి తిండి పెడతాడు – ఎవరు?", "answer": "చిమ్మట"}
             ]
             for idx, riddle in enumerate(riddles, 1):
-                st.markdown(f"**పొడుపు కథ {idx}:** {riddle['question']}")
+                st.markdown(f"**పొడుపుకథ {idx}:** {riddle['question']}")
                 user_answer = st.text_input(f"మీ సమాధానం {idx}:", key=f"riddle_{idx}")
                 if user_answer:
                     if user_answer.strip() == riddle["answer"]:
@@ -77,10 +81,13 @@ def content_page():
                     else:
                         st.error(f"తప్పు సమాధానం. సరైనది: {riddle['answer']}")
 
-        if st.button("వెనక్కి"):
-            prev_page()
-        if st.button("మీ మాట చెప్పండి"):
-            next_page()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("వెనక్కి"):
+                prev_page()
+        with col2:
+            if st.button("మీ మాట చెప్పండి"):
+                next_page()
 
 def feedback_page():
     col = side_by_side_image("second_image.jpg")
