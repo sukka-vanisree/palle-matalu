@@ -1,0 +1,17 @@
+[project]
+name = "palle-matalu"
+version = "1.0.0"
+description = "Streamlit app to showcase Telangana proverbs and riddles"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0" }
+authors = [{ name = "Sukka Vanisree" }]
+
+dependencies = [
+  "streamlit>=1.32.0",
+  "pillow>=10.0.0"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
