@@ -30,5 +30,5 @@ Many Telugu idioms and folk riddles are being forgotten by the younger generatio
 ### 1. Clone or Download the Repository
 
 ```bash
-git clone https://github.com/your-username/palle-maatalu.git
+git clone https://github.com/sukkavanisree/palle-maatalu.git
 cd palle-maatalu
