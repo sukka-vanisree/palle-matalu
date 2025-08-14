@@ -1,17 +1,11 @@
-# 🤝 Contributing to పల్లె మాటలు
+# Contributing to Palle Matalu
 
-🙏 Thank you for showing interest in contributing to **పల్లె మాటలు** — a project dedicated to preserving and celebrating Telugu proverbs (సామెతలు) and riddles (పొడుపుకథలు), especially in the Telangana dialect.
+Thanks for your interest in contributing! This project collects and shares Telangana proverbs (సామెతలు) and riddles (పొడుపుకథలు).
 
----
-
-## 🚀 How to Contribute
-
-We welcome your ideas, feedback, and additions! Here's how you can help:
-
-### 💡 1. Suggest Proverbs or Riddles
-You can contribute:
-- New **Telugu proverbs** (సామెతలు) with meaning and usage.
-- Fun or wise **riddles** (పొడుపుకథలు) with correct answers.
+## How to Contribute
+1. Fork the repo and create a feature branch:
+   ```bash
+   git checkout -b feature/my-change
 
 Please include:
 - The original proverb or riddle in Telugu
