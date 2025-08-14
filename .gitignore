@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.env
+.venv/
+venv/
+ENV/
+
+# Streamlit
+.streamlit/
+
+# VS Code local settings (we keep .vscode folder, but ignore local history)
+.vscode/.ropeproject/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
